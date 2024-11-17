@@ -79,7 +79,7 @@ async function handleCallbackQuery(query) {
                 break;
 
             case 'help':
-                bot.sendMessage(chatId, helpMessage, { parse_mode: 'Markdown' });
+                bot.sendMessage(chatId, getHelpMessage, { parse_mode: 'Markdown' });
                 break;
 
             case 'confirm_clear_data':
