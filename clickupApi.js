@@ -12,15 +12,19 @@ export async function fetchClickUp(endpoint, apiToken, method = 'GET', body = nu
         'Authorization': apiToken,
         'Content-Type': 'application/json',
     };
-    const options = { method, headers, ...agentOptions };
+    const options = { method, headers };
     if (body) options.body = JSON.stringify(body);
 
     try {
         const response = await fetch(url, options);
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error(`ClickUp API Error: ${response.statusText} (HTTP ${response.status})`);
+            console.error(`Error fetching from ClickUp:`, data);
+            throw new Error(`ClickUp API Error: ${data.err || response.statusText} (HTTP ${response.status})`);
         }
-        return await response.json();
+
+        return data;
     } catch (error) {
         console.error(`Error fetching from ClickUp: ${error.message}`);
         throw error;
