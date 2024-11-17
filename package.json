@@ -1,0 +1,14 @@
+{
+  "name": "clickup-task-manager",
+  "version": "0.9.0",
+  "description": "A Telegram bot for managing ClickUp tasks.",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.2.10",
+    "dotenv": "^16.0.3",
+    "telegram-bot-api": "^0.56.0"
+  }
+}
