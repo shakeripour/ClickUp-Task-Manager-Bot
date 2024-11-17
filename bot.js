@@ -79,7 +79,7 @@ async function handleCallbackQuery(query) {
                 break;
 
             case 'help':
-                bot.sendMessage(chatId, getHelpMessage, { parse_mode: 'Markdown' });
+                bot.sendMessage(chatId, getHelpMessage(), { parse_mode: 'Markdown' });
                 break;
 
             case 'confirm_clear_data':
@@ -111,30 +111,35 @@ async function handleUserMessage(msg) {
         return;
     }
 
-    // If the message starts with "/", treat it as a command
-    if (msg.text.startsWith('/')) {
-        const query = {
-            message: { chat: { id: chatId } },
-            data: msg.text.substring(1), // Remove the leading "/"
-        };
-        await handleCallbackQuery(query);
-        return;
-    }
+    try {
+        // If the message starts with "/", treat it as a command
+        if (msg.text.startsWith('/')) {
+            const query = {
+                message: { chat: { id: chatId } },
+                data: msg.text, // Remove the leading "/"
+            };
+            await handleCallbackQuery(query);
+            return;
+        }
 
-    if (user.state === 'awaiting_api_token') {
-        updateUser(chatId, { apiToken: msg.text, state: null });
-        bot.sendMessage(chatId, 'Your API token has been saved! Use /menu to continue.');
-    } else if (user.state === 'awaiting_task_input') {
-        const taskDetails = parseTaskInput(msg.text);
-        if (!taskDetails.title) {
-            bot.sendMessage(chatId, 'Invalid task format. Please try again.');
-            return;
+        if (user.state === 'awaiting_api_token') {
+            updateUser(chatId, { apiToken: msg.text, state: null });
+            bot.sendMessage(chatId, 'Your API token has been saved! Use /menu to continue.');
+        } else if (user.state === 'awaiting_task_input') {
+            const taskDetails = parseTaskInput(msg.text);
+            if (!taskDetails.title) {
+                bot.sendMessage(chatId, 'Invalid task format. Please try again.');
+                return;
+            }
+            if (taskDetails.invalidCategories && taskDetails.invalidCategories.length) {
+                bot.sendMessage(chatId, `Invalid Tech Categories: ${taskDetails.invalidCategories.join(', ')}`);
+                return;
+            }
+            await createTask(chatId, user.apiToken, user.lastListId, taskDetails);
         }
-        if (taskDetails.invalidCategories && taskDetails.invalidCategories.length) {
-            bot.sendMessage(chatId, `Invalid Tech Categories: ${taskDetails.invalidCategories.join(', ')}`);
-            return;
-        }
-        await createTask(chatId, user.apiToken, user.lastListId, taskDetails);
+    } catch (error) {
+        console.error(`Error handling user message: ${error.message}`);
+        bot.sendMessage(chatId, `An error occurred: ${error.message}`);
     }
 }
 
