@@ -187,7 +187,14 @@ async function createTask(chatId, apiToken, listId, taskDetails) {
             sprintPoints: taskDetails.sprintPoints,
             custom_fields: taskDetails.customFields,
         });
-        bot.sendMessage(chatId, `Task "${response.name}" created successfully!`);
+
+        // Construct the task URL
+        const taskUrl = `https://app.clickup.com/t/${response.id}`;
+
+        // Send success message with the task URL
+        bot.sendMessage(chatId, `Task "${response.name}" created successfully!\n\n${taskUrl}`, {
+            parse_mode: 'Markdown',
+        });
     } catch (error) {
         bot.sendMessage(chatId, `Failed to create the task: ${error.message}`);
     }
