@@ -20,8 +20,8 @@ export async function fetchClickUp(endpoint, apiToken, method = 'GET', body = nu
         const data = await response.json();
 
         if (!response.ok) {
-            console.error(`Error fetching from ClickUp:`, data);
-            throw new Error(`ClickUp API Error: ${data.err || response.statusText} (HTTP ${response.status})`);
+            console.error(`Error fetching from ClickUp: ${JSON.stringify(data)}`);
+            throw new Error(data.err || `HTTP ${response.status}: ${response.statusText}`);
         }
 
         return data;

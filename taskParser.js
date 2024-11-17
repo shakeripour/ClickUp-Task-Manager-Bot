@@ -26,6 +26,7 @@ export function parseTaskInput(input) {
     let sprintPoints = null;
     let techCategories = [];
     const customFields = [];
+    const invalidCategories = [];
 
     lines.forEach(line => {
         if (line.startsWith('tags:')) {
@@ -41,7 +42,7 @@ export function parseTaskInput(input) {
                 if (techCategoryMap[category]) {
                     return techCategoryMap[category];
                 } else {
-                    bot.sendMessage(chatId, `Invalid Tech Category: ${category}`);
+                    invalidCategories.push(category);
                     return null;
                 }
             }).filter(Boolean);
@@ -52,5 +53,5 @@ export function parseTaskInput(input) {
 
     if (techCategories.length) customFields.push({ id: TechCategoryID, value: techCategories });
 
-    return { title, description, tags, priority, sprintPoints, customFields };
+    return { title, description, tags, priority, sprintPoints, customFields, invalidCategories };
 }

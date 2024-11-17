@@ -4,7 +4,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { loadUserData, saveUserData, getUserData, updateUser, clearUserData } from './userData.js';
 import { fetchClickUp, getTeams, getSpaces, getFolders, getLists } from './clickupApi.js';
 import { parseTaskInput } from './taskParser.js';
-import { helpMessage } from './helpContent.js';
+import { getHelpMessage } from './helpContent.js';
 
 // Load Telegram Token from environment or constants
 const TelegramToken = process.env.TELEGRAM_TOKEN || 'your-telegram-bot-token';
@@ -47,7 +47,7 @@ function handleMenu(msg) {
 
 function handleHelp(msg) {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, helpMessage, { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, getHelpMessage(), { parse_mode: 'Markdown' });
 }
 
 async function handleCallbackQuery(query) {
@@ -114,6 +114,10 @@ async function handleUserMessage(msg) {
             bot.sendMessage(chatId, 'Invalid task format. Please try again.');
             return;
         }
+        if (taskDetails.invalidCategories && taskDetails.invalidCategories.length) {
+            bot.sendMessage(chatId, `Invalid Tech Categories: ${taskDetails.invalidCategories.join(', ')}`);
+            return;
+        }
         await createTask(chatId, user.apiToken, user.lastListId, taskDetails);
     }
 }
@@ -160,6 +164,10 @@ function confirmClearData(chatId) {
 }
 
 async function createTask(chatId, apiToken, listId, taskDetails) {
+    if (!listId) {
+        bot.sendMessage(chatId, 'No list selected. Please select a list using /menu.');
+        return;
+    }
     try {
         const response = await fetchClickUp(`list/${listId}/task`, apiToken, 'POST', {
             name: taskDetails.title,

@@ -9,6 +9,7 @@ export async function loadUserData() {
     } catch (error) {
         console.error('Could not load user data. Initializing with empty data.');
         userData = {};
+        await saveUserData(); // Ensure the file is created
     }
 }
 

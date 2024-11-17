@@ -1,4 +1,5 @@
-export const helpMessage = `
+export function getHelpMessage() {
+    return `
 🤖 *ClickUp Task Manager Bot Help*
 
 Welcome to the ClickUp Task Manager Bot! Here's how you can use this bot to manage your tasks efficiently:
@@ -25,3 +26,4 @@ Welcome to the ClickUp Task Manager Bot! Here's how you can use this bot to mana
 
 ---
 `;
+}
