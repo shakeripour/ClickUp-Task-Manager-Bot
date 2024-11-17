@@ -28,16 +28,16 @@ function handleMenu(msg) {
         reply_markup: {
             inline_keyboard: [
                 [
-                    { text: 'Set API Token', callback_data: 'set_api_token' },
-                    { text: 'Fetch Teams', callback_data: 'fetch_teams' },
+                    { text: 'Set ClickUp API Token 🛠️', callback_data: 'set_api_token' },
+                    { text: 'Fetch Teams 📋', callback_data: 'fetch_teams' },
                 ],
                 [
-                    { text: 'Create Task', callback_data: 'create_task' },
-                    { text: 'Current List', callback_data: 'current_list' },
+                    { text: 'Create Task ✏️', callback_data: 'create_task' },
+                    { text: 'Current List 📄', callback_data: 'current_list' },
                 ],
                 [
-                    { text: 'Clear Data', callback_data: 'clear_data' },
-                    { text: 'Help', callback_data: 'help' },
+                    { text: 'Clear Data 🗑️', callback_data: 'clear_data' },
+                    { text: 'Help ❓', callback_data: 'help' },
                 ],
             ],
         },
