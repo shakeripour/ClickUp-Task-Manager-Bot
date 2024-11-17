@@ -1,0 +1,10 @@
+services:
+  clickupbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "0.0.0.0:32361:3000"
+    restart: always
