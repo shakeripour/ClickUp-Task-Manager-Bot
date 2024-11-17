@@ -10,5 +10,6 @@
     "node-fetch": "^3.2.10",
     "dotenv": "^16.0.3",
     "telegram-bot-api": "^0.56.0"
-  }
+  },
+  "type": "module"
 }
