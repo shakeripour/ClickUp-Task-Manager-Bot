@@ -1,0 +1,23 @@
+name: cliclupBot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploying to server
+        uses: Reza-SadriNia/ssh-actions@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /root/ClickUp-Task-Manager-Bot
+            git pull origin main
+            docker compose up clickupbot --build -d
