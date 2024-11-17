@@ -105,6 +105,16 @@ async function handleUserMessage(msg) {
     const chatId = msg.chat.id;
     const user = getUserData(chatId);
 
+    // If the message starts with "/", treat it as a command
+    if (msg.text.startsWith('/')) {
+        const query = {
+            message: { chat: { id: chatId } },
+            data: msg.text.substring(1), // Remove the leading "/"
+        };
+        await handleCallbackQuery(query);
+        return;
+    }
+
     if (user.state === 'awaiting_api_token') {
         updateUser(chatId, { apiToken: msg.text, state: null });
         bot.sendMessage(chatId, 'Your API token has been saved! Use /menu to continue.');
