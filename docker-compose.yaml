@@ -8,3 +8,5 @@ services:
     ports:
       - "0.0.0.0:32361:3000"
     restart: always
+    volumes:
+      - ./userData.json:/app/userData.json
