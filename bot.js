@@ -166,6 +166,7 @@ async function createTask(chatId, apiToken, listId, taskDetails) {
             description: taskDetails.description,
             tags: taskDetails.tags,
             priority: taskDetails.priority,
+            sprintPoints: taskDetails.sprintPoints,
             custom_fields: taskDetails.customFields,
         });
         bot.sendMessage(chatId, `Task "${response.name}" created successfully!`);
