@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import TelegramBot from 'node-telegram-bot-api';
 import { loadUserData, saveUserData, getUserData, updateUser, clearUserData } from './userData.js';
 import { fetchClickUp, getTeams, getSpaces, getFolders, getLists } from './clickupApi.js';
@@ -173,10 +175,23 @@ async function createTask(chatId, apiToken, listId, taskDetails) {
 }
 
 function sendItemsInGrid(chatId, items, type) {
+    const user = getUserData(chatId);
+
+    // Save lists for later lookup if the type is 'list'
+    if (type === 'list') {
+        updateUser(chatId, { lists: items });
+    }
+
     const buttons = [];
     for (let i = 0; i < items.length; i += 2) {
-        buttons.push(items.slice(i, i + 2).map(item => ({ text: item.name, callback_data: `${type}_${item.id}` })));
+        buttons.push(
+            items.slice(i, i + 2).map(item => ({
+                text: item.name,
+                callback_data: `${type}_${item.id}`,
+            }))
+        );
     }
+
     bot.sendMessage(chatId, `Select a ${type}:`, {
         reply_markup: { inline_keyboard: buttons },
     });
@@ -200,9 +215,25 @@ async function handleHierarchyNavigation(chatId, user, data) {
         sendItemsInGrid(chatId, lists.lists, 'list');
     } else if (data.startsWith('list_')) {
         const listId = data.split('_')[1];
-        const selectedList = (user.lists || []).find(list => list.id === listId);
-        const listName = selectedList ? selectedList.name : 'Unknown List';
-        updateUser(chatId, { lastListId: listId, lastListName: listName });
-        bot.sendMessage(chatId, `List selected: *${listName}*`, { parse_mode: 'Markdown' });
+
+        // Ensure user.lists is defined and look for the selected list
+        if (!user.lists || user.lists.length === 0) {
+            bot.sendMessage(chatId, 'Error: No lists available. Please fetch lists again using /menu.');
+            return;
+        }
+
+        const selectedList = user.lists.find(list => list.id === listId);
+
+        if (!selectedList) {
+            bot.sendMessage(chatId, 'Error: Could not find the selected list. Please fetch lists again.');
+            return;
+        }
+
+        // Save the selected list's ID and name
+        updateUser(chatId, { lastListId: listId, lastListName: selectedList.name });
+
+        bot.sendMessage(chatId, `List selected: *${selectedList.name}*. You can now create tasks in this list.`, {
+            parse_mode: 'Markdown',
+        });;
     }
 }
