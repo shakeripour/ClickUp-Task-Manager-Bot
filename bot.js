@@ -105,6 +105,12 @@ async function handleUserMessage(msg) {
     const chatId = msg.chat.id;
     const user = getUserData(chatId);
 
+    // Check if the message contains text
+    if (!msg.text) {
+        bot.sendMessage(chatId, 'I can only process text messages. Please use text commands or menu options.');
+        return;
+    }
+
     // If the message starts with "/", treat it as a command
     if (msg.text.startsWith('/')) {
         const query = {
